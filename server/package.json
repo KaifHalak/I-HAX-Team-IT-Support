@@ -3,16 +3,19 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon src/index.js"
   },
   "dependencies": {
-		"cookie-parser": "^1.4.6",
-		"cors": "^2.8.5",
-		"dotenv": "^16.4.5",
-		"express": "^4.21.0",
-		"nodemon": "^3.1.4"
-	},
+    "@kinde-oss/kinde-nodejs-sdk": "^1.2.4",
+    "body-parser": "^1.20.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "nodemon": "^3.1.4"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC"
