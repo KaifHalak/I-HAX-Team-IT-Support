@@ -1,0 +1,24 @@
+.leaflet-container {
+    @apply h-full w-full;
+  }
+  
+  .leaflet-control-zoom {
+    @apply border border-gray-300 shadow-lg;
+  }
+  
+  .leaflet-control-zoom-in,
+  .leaflet-control-zoom-out {
+    @apply bg-white text-gray-700 hover:bg-gray-100;
+  }
+  
+  .leaflet-popup-content-wrapper {
+    @apply bg-white rounded-lg shadow-lg;
+  }
+  
+  .leaflet-popup-content {
+    @apply text-gray-700 p-2;
+  }
+  
+  .leaflet-popup-tip-container {
+    @apply hidden;
+  }
