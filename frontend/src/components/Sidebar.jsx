@@ -69,16 +69,16 @@ const Sidebar = ({ onSearch }) => {
         <h2 className="flex items-center mb-4 text-xl font-semibold">
           <AlertTriangle size={20} className="mr-2 text-yellow-500" /> Active Alerts
         </h2>
-        <ul className="space-y-3">
+        {/* <ul className="space-y-3">
           <li className="flex items-center p-3 transition duration-300 bg-red-900 rounded-lg hover:bg-red-800">
             <BarChart2 size={18} className="mr-2" />
-            <span>High risk in Central London</span>
+            <span>Medium risk in Central London</span>
           </li>
           <li className="flex items-center p-3 transition duration-300 bg-yellow-900 rounded-lg hover:bg-yellow-800">
             <BarChart2 size={18} className="mr-2" />
             <span>Medium risk in East End</span>
           </li>
-        </ul>
+        </ul> */}
       </div>
     </div>
   )

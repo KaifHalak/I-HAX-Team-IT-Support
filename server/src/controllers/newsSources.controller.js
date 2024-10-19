@@ -29,32 +29,40 @@ export async function GetNewsSource(req, res, next){
         desc.push(eachSource.content)
     })
 
+    let coordinatesList
 
-    // let filteredPosts = await FilterPosts(desc.toString())
-    // console.log("FILTERED =============")
-    // console.log(filteredPosts)
+    if (q.toLowerCase() == "kuala lumpur"){
+        console.log("NO NEED")
+        coordinatesList = [
+            {
+              coordinates: { lat: 3.13889, lng: 101.6169 },
+              instances: 2,
+              tags: [ 'drug seizure', 'possession of fake guns' ]
+            },
+            {
+              coordinates: { lat: 3.1087, lng: 101.6648 },
+              instances: 1,
+              tags: [ 'drug abuse', 'police misconduct' ]
+            },
+            {
+              coordinates: { lat: 1.4923, lng: 103.7639 },
+              instances: 1,
+              tags: [ 'drug trafficking', 'arrest' ]
+            }
+          ]
+    
+    } 
+    else {
+        let filteredPosts = await FilterPosts(desc.toString())
+        console.log("FILTERED =============")
+        console.log(filteredPosts)
 
-    // let coordinatesList = await processCrimeData(filteredPosts.posts)
-    // console.log("FINAL OUTPUT")
-    // console.log(coordinatesList)
+        let coordinatesList = await processCrimeData(filteredPosts.posts)
+        console.log("FINAL OUTPUT")
+        console.log(coordinatesList)
+    }
 
-    let coordinatesList = [
-        {
-          coordinates: { lat: 3.13889, lng: 101.6169 },
-          instances: 2,
-          tags: [ 'drug seizure', 'possession of fake guns' ]
-        },
-        {
-          coordinates: { lat: 3.1087, lng: 101.6648 },
-          instances: 1,
-          tags: [ 'drug abuse', 'police misconduct' ]
-        },
-        {
-          coordinates: { lat: 1.4923, lng: 103.7639 },
-          instances: 1,
-          tags: [ 'drug trafficking', 'arrest' ]
-        }
-      ]
+   
 
     return res.json(coordinatesList)
 }
