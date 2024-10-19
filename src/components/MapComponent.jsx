@@ -1,110 +1,111 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet'
-import 'leaflet/dist/leaflet.css'
-import L from 'leaflet'
+import React, { useState, useEffect, useRef } from 'react';
+import { MapContainer, TileLayer, CircleMarker, Popup, useMap, Circle } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 // Fix for default marker icon
-delete L.Icon.Default.prototype._getIconUrl
+delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-icon-2x.png',
   iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-icon.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-shadow.png',
-})
+});
 
 // Custom hook to update map view
 function ChangeView({ center, zoom }) {
-  const map = useMap()
+  const map = useMap();
   useEffect(() => {
-    map.setView(center, zoom)
-  }, [center, zoom])
-  return null
+    map.setView(center, zoom);
+  }, [center, zoom]);
+  return null;
 }
 
-// Function to calculate distance between two points
-function getDistance(lat1, lon1, lat2, lon2) {
-  const R = 6371 // Radius of the Earth in km
-  const dLat = (lat2 - lat1) * Math.PI / 180
-  const dLon = (lon2 - lon1) * Math.PI / 180
-  const a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-    Math.sin(dLon/2) * Math.sin(dLon/2)
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
-  return R * c
-}
-
-// Simulated incident data
-const incidentData = [
-  { id: 1, position: [51.505, -0.09], type: 'crime' },
-  { id: 2, position: [51.51, -0.1], type: 'disaster' },
-  { id: 3, position: [51.49, -0.08], type: 'crime' },
-  { id: 4, position: [51.5, -0.05], type: 'crime' },
-  { id: 5, position: [51.52, -0.12], type: 'disaster' },
-  { id: 6, position: [51.515, -0.095], type: 'crime' },
-  { id: 7, position: [51.508, -0.11], type: 'crime' },
-  { id: 8, position: [51.498, -0.087], type: 'disaster' },
-  { id: 9, position: [51.503, -0.06], type: 'crime' },
-  { id: 10, position: [51.51, -0.085], type: 'crime' },
-]
+// Simulated crime data (replace with real data in production)
+const crimeData = [
+  { id: 1, position: [3.1390, 101.6869], incidents: 50, type: 'Theft' },
+  { id: 2, position: [3.1450, 101.6950], incidents: 30, type: 'Assault' },
+  { id: 3, position: [3.1330, 101.6800], incidents: 80, type: 'Burglary' },
+  { id: 4, position: [3.1410, 101.6920], incidents: 20, type: 'Vandalism' },
+  { id: 5, position: [3.1370, 101.6830], incidents: 60, type: 'Robbery' },
+];
 
 const MapComponent = ({ searchLocation, onSearchComplete }) => {
-  const [mapCenter, setMapCenter] = useState([51.505, -0.09])
-  const [mapZoom, setMapZoom] = useState(13)
-  const [searchMarker, setSearchMarker] = useState(null)
-  const [clusters, setClusters] = useState([])
-  const mapRef = useRef()
+  const [mapCenter, setMapCenter] = useState([3.1390, 101.6869]); // Kuala Lumpur coordinates
+  const [mapZoom, setMapZoom] = useState(13);
+  const [searchMarker, setSearchMarker] = useState(null);
+  const [showCrimes, setShowCrimes] = useState(false);
+  const [policeStations, setPoliceStations] = useState([]);
+  const mapRef = useRef();
 
   useEffect(() => {
     if (searchLocation) {
-      fetchLocation(searchLocation)
+      fetchLocation(searchLocation);
     }
-  }, [searchLocation])
-
-  useEffect(() => {
-    // Cluster incidents
-    const newClusters = []
-    incidentData.forEach(incident => {
-      const existingCluster = newClusters.find(cluster => 
-        getDistance(cluster.position[0], cluster.position[1], incident.position[0], incident.position[1]) <= 5
-      )
-      if (existingCluster) {
-        existingCluster.incidents.push(incident)
-      } else {
-        newClusters.push({
-          position: incident.position,
-          incidents: [incident]
-        })
-      }
-    })
-    setClusters(newClusters)
-  }, [])
+  }, [searchLocation]);
 
   // Fetch location data from OpenStreetMap API
   const fetchLocation = async (query) => {
     try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
-      const data = await response.json()
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+      const data = await response.json();
       
       if (data && data.length > 0) {
-        const { lat, lon } = data[0]
-        setMapCenter([parseFloat(lat), parseFloat(lon)])
-        setMapZoom(12)
-        setSearchMarker([parseFloat(lat), parseFloat(lon)])
-        onSearchComplete({ success: true, message: 'Location found' })
+        const { lat, lon } = data[0];
+        const newCenter = [parseFloat(lat), parseFloat(lon)];
+        setMapCenter(newCenter);
+        setMapZoom(14);
+        setSearchMarker(newCenter);
+        setShowCrimes(false);
+        setTimeout(() => setShowCrimes(true), 1000); // Delay to allow animation
+        fetchPoliceStations(newCenter);
+        onSearchComplete({ success: true, message: 'Location found' });
       } else {
-        onSearchComplete({ success: false, message: 'Location not found' })
+        onSearchComplete({ success: false, message: 'Location not found' });
       }
     } catch (error) {
-      console.error('Error fetching location:', error)
-      onSearchComplete({ success: false, message: 'Error searching for location' })
+      console.error('Error fetching location:', error);
+      onSearchComplete({ success: false, message: 'Error searching for location' });
     }
-  }
+  };
+
+  // Fetch police stations using Overpass API
+  const fetchPoliceStations = async (center) => {
+    const [lat, lon] = center;
+    const radius = 5000; // 5km radius
+    const query = `
+      [out:json];
+      (
+        node["amenity"="police"](around:${radius},${lat},${lon});
+        way["amenity"="police"](around:${radius},${lat},${lon});
+        relation["amenity"="police"](around:${radius},${lat},${lon});
+      );
+      out center;
+    `;
+
+    try {
+      const response = await fetch('https://overpass-api.de/api/interpreter', {
+        method: 'POST',
+        body: query
+      });
+      const data = await response.json();
+      const stations = data.elements.map((element, index) => ({
+        id: element.id,
+        position: element.lat && element.lon ? [element.lat, element.lon] : [element.center.lat, element.center.lon],
+        name: element.tags.name || `Police Station ${index + 1}`
+      }));
+      setPoliceStations(stations);
+    } catch (error) {
+      console.error('Error fetching police stations:', error);
+    }
+  };
 
   // Calculate color based on number of incidents
   const getColor = (incidents) => {
-    const opacity = Math.min(0.2 + (incidents.length / 10) * 0.8, 1)
-    return `rgba(255, 0, 0, ${opacity})`
-  }
+    if (incidents <= 20) return 'blue';
+    if (incidents <= 40) return 'yellow';
+    if (incidents <= 60) return 'orange';
+    return 'red';
+  };
 
   return (
     <MapContainer 
@@ -119,32 +120,75 @@ const MapComponent = ({ searchLocation, onSearchComplete }) => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {clusters.map((cluster, index) => (
+      
+      {/* 5km radius circle */}
+      {searchMarker && (
+        <Circle
+          center={searchMarker}
+          radius={5000}
+          fillColor="#000"
+          fillOpacity={0.05}
+          color="#000"
+          weight={2}
+        />
+      )}
+
+      {/* Central blue circle */}
+      {searchMarker && (
         <CircleMarker
-          key={index}
-          center={cluster.position}
-          radius={Math.sqrt(cluster.incidents.length) * 5}
-          fillColor={getColor(cluster.incidents)}
-          color="red"
+          center={searchMarker}
+          radius={15}
+          fillColor="#3388ff"
+          color="#3388ff"
+          weight={2}
+          opacity={1}
+          fillOpacity={0.5}
+        />
+      )}
+
+      {/* Crime markers */}
+      {showCrimes && crimeData.map((crime) => (
+        <CircleMarker
+          key={crime.id}
+          center={crime.position}
+          radius={10}
+          fillColor={getColor(crime.incidents)}
+          color={getColor(crime.incidents)}
           weight={2}
           opacity={0.8}
           fillOpacity={0.8}
         >
           <Popup>
             <div className="text-center">
-              <h3 className="font-bold text-lg mb-2">Risk Zone</h3>
-              <p className="text-red-600 font-semibold">Incidents: {cluster.incidents.length}</p>
-              <ul className="mt-2">
-                {cluster.incidents.map((incident, i) => (
-                  <li key={i} className="text-sm">
-                    {incident.type === 'crime' ? '🚨' : '🌪️'} {incident.type.charAt(0).toUpperCase() + incident.type.slice(1)}
-                  </li>
-                ))}
-              </ul>
+              <h3 className="font-bold text-lg mb-2">{crime.type}</h3>
+              <p className="text-red-600 font-semibold">Incidents: {crime.incidents}</p>
             </div>
           </Popup>
         </CircleMarker>
       ))}
+
+      {/* Police station markers */}
+      {policeStations.map((station) => (
+        <CircleMarker
+          key={station.id}
+          center={station.position}
+          radius={8}
+          fillColor="#00ff00"
+          color="#006400"
+          weight={2}
+          opacity={1}
+          fillOpacity={0.8}
+        >
+          <Popup>
+            <div className="text-center">
+              <h3 className="font-bold text-lg mb-2">{station.name}</h3>
+              <p className="text-green-600">Police Station</p>
+            </div>
+          </Popup>
+        </CircleMarker>
+      ))}
+
+      {/* Search marker */}
       {searchMarker && (
         <CircleMarker
           center={searchMarker}
@@ -164,7 +208,7 @@ const MapComponent = ({ searchLocation, onSearchComplete }) => {
         </CircleMarker>
       )}
     </MapContainer>
-  )
-}
+  );
+};
 
-export default MapComponent
+export default MapComponent;
