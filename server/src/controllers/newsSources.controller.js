@@ -5,7 +5,7 @@ const URL = "https://newsapi.org/v2/everything"
 
 export async function GetNewsSource(req, res, next){
 
-    const { country, region } = req.query
+    const { q } = req.query
 
     const todayDate = new Date()
     const lastMonth = (new Date())
@@ -14,7 +14,7 @@ export async function GetNewsSource(req, res, next){
     const todayDateISO = todayDate.toISOString().split("T")[0]
     const lastMonthISO = lastMonth.toISOString().split("T")[0]
 
-    const query = `?q=(${region})%20AND%20(theft%20OR%20roberry%20OR%20assault%20OR%20burglary%20OR%20violence%20OR%drugs)&from=${(todayDateISO)}&to=${(lastMonthISO)}&language=en&pageSize=50`;
+    const query = `?q=(${q})%20AND%20(theft%20OR%20roberry%20OR%20assault%20OR%20burglary%20OR%20violence%20OR%drugs)&from=${(todayDateISO)}&to=${(lastMonthISO)}&language=en&pageSize=50`;
 
     // Get all states / cities
 
