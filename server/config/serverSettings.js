@@ -2,7 +2,6 @@ import express from "express"
 import http from "http"
 import cors from "cors"
 import bodyParser from "body-parser"
-
 import env from "../src/utils/env.js"
 
 import { fileURLToPath } from "url"
@@ -20,7 +19,9 @@ mainRouter.use(express.json())
 
 let PORT = env("SERVER_PORT") || 3000
 
-server.listen(PORT, () => {
+
+
+server.listen(PORT, async () => {
      console.log(`listening on port ${PORT}`)
 })
 

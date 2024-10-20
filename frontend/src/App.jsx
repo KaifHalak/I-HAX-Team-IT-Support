@@ -38,7 +38,7 @@ function App() {
   return (
     <>
       <Helmet>
-        <title>Risk Zone Monitor - Real-time Crime and Disaster Tracking</title>
+        <title>GeoGuard - Real-time Crime and Disaster Tracking</title>
         <meta name="description" content="Monitor and assess dangerous areas in real-time with our AI-powered map interface. Track crime zones and natural disasters globally." />
         <meta name="keywords" content="risk zone, crime map, disaster tracking, real-time monitoring, global safety" />
         <meta name="author" content="Your Company Name" />

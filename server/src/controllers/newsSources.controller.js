@@ -4,9 +4,14 @@ import Groq from "groq-sdk";
 const URL = "https://newsapi.org/v2/everything"
 const groq = new Groq({ apiKey: env("GROQ_API_KEY") });
 
+
+
 export async function GetNewsSource(req, res, next){
 
     const { q } = req.query
+
+    // Check if the zone is already in the DB
+
 
     const todayDate = new Date()
     const lastMonth = (new Date())
@@ -50,19 +55,19 @@ export async function GetNewsSource(req, res, next){
               tags: [ 'drug trafficking', 'arrest' ]
             }
           ]
-    
-    } 
+
+         
+    }
     else {
         let filteredPosts = await FilterPosts(desc.toString())
         console.log("FILTERED =============")
         console.log(filteredPosts)
 
-        let coordinatesList = await processCrimeData(filteredPosts.posts)
+        coordinatesList = await processCrimeData(filteredPosts.posts)
         console.log("FINAL OUTPUT")
         console.log(coordinatesList)
     }
 
-   
 
     return res.json(coordinatesList)
 }
@@ -149,7 +154,7 @@ async function PostAnalysis(scrapedData){
             top_p: 1,
             stop: null,
             stream: false,
-            response_format: { "type": "json_object" }
+            response_format: {"type": "json_object"}
         });
 
         // Log the raw response to see what AI returned

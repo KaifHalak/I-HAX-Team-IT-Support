@@ -23,7 +23,7 @@ const Sidebar = ({ onSearch }) => {
     <div className="flex flex-col h-full p-6 text-white shadow-2xl bg-gradient-to-b from-gray-900 to-gray-800 w-72 rounded-r-2xl">
       <h1 className="flex items-center mb-8 text-3xl font-bold">
         <MapPin className="mr-2 text-red-500" />
-        Risk Zone Monitor
+        GeoGuard
       </h1>
       <form onSubmit={handleSearch} className="mb-8">
         <div className="relative">
