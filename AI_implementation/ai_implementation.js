@@ -1,5 +1,6 @@
 import Groq from "groq-sdk";
 import dotenv from "dotenv";
+import axios from "axios"; // Axios for making HTTP requests to the Google Geocoding API
 dotenv.config();
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
