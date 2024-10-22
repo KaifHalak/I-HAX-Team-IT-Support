@@ -34,8 +34,8 @@ GeoGuard utilizes advanced AI and data aggregation techniques to visualize crime
 
 ### Backend
 - Node.js
-- Express.js (or your specific backend framework)
-- News API (or your specific news data source)
+- Express.js 
+- News API 
 
 ### AI/ML
 - llama-3.2-90b-vision-preview by Groq
