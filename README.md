@@ -1,5 +1,8 @@
 # GeoGuard
 
+## DEMO:
+https://drive.google.com/file/d/1NsaSv3nQgSKr_Tdvj1vkJmMbJxShZGex/view?usp=sharing
+
 ## I-HAX Hackathon Project
 
 GeoGuard is an AI-powered map platform that aggregates and displays real-time information about crime rates and safety in specific areas. Developed for the I-HAX Hackathon, GeoGuard aims to provide users with valuable insights into the safety of different locations.
